@@ -1,6 +1,6 @@
 import AppRegistry from './AppRegistry';
 
-class Component {
+export default class Component {
 
     constructor(element, parentComponent, params) {
 
@@ -122,7 +122,6 @@ class Component {
                 this.bindComponentClick(element);
             })
     }
-
 }
 
-export default Component;
+
