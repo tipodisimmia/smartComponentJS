@@ -1,6 +1,6 @@
 import AppRegistry from './AppRegistry';
 
-export default class Component {
+class Component {
 
     constructor(element, parentComponent, params) {
 
@@ -124,4 +124,4 @@ export default class Component {
     }
 }
 
-
+export default  Component;
