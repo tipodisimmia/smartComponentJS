@@ -4,8 +4,9 @@ export default {
     input: 'src/index.js',
     output: {
         file: 'build/SmartComponentJS.js',
-        format: 'iife',
+        format: 'cjs',
         sourcemap: 'inline',
-        name: "SmartComponentJS"
+        name: "SmartComponentJS",
+        module:"SmartComponentJS"
     }
 }
