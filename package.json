@@ -2,7 +2,7 @@
   "name": "smart-component-js",
   "version": "1.0.0",
   "description": "A simple javascript library for component building",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/tipodisimmia/smartComponentJS/issues"
   },
-  "homepage": "https://github.com/tipodisimmia/smartComponentJS#readme"
+  "homepage": "https://github.com/tipodisimmia/smartComponentJS#readme",
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "rollup": "^0.56.4",
+    "rollup-plugin-babel": "^4.0.0-beta.2"
+  }
 }
