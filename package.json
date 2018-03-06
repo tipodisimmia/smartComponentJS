@@ -1,0 +1,23 @@
+{
+  "name": "smart-component-js",
+  "version": "1.0.0",
+  "description": "A simple javascript library for component building",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tipodisimmia/smartComponentJS.git"
+  },
+  "keywords": [
+    "javascript",
+    "component"
+  ],
+  "author": "Roberto Rossi <robertorossigm@gmail.com> (https://github.com/tipodisimmia/smartComponentJS)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tipodisimmia/smartComponentJS/issues"
+  },
+  "homepage": "https://github.com/tipodisimmia/smartComponentJS#readme"
+}
