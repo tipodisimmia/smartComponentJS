@@ -1,8 +1,3 @@
-/**
- * Registra tutti i controller e componenti disponibili nel lifecycle della applicazione
- *
- * E' un singleton
- */
 
 class AppRegistry {
     constructor() {
