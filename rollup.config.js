@@ -1,10 +1,11 @@
 
+
 export default {
     input: 'src/index.js',
-    output:{
+    output: {
         file: 'build/SmartComponentJS.js',
-        format: 'umd',
+        format: 'iife',
         sourcemap: 'inline',
-        name:"SmartComponentJS"
+        name: "SmartComponentJS"
     }
-};
+}
