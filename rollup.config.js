@@ -7,7 +7,6 @@ export default {
         file: 'build/SmartComponentJS.js',
         format: 'es',
         sourcemap: 'inline',
-        name: "SmartComponentJS",
-        module:"SmartComponentJS",
+        name: "SmartComponentJS"
     }
 }
