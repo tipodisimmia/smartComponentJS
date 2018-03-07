@@ -53,6 +53,7 @@ class Component {
     clickHandler(ev) {
         let functionCode = ev.currentTarget.getAttribute('component-click');
         let functionName = functionCode.split("(")[0];
+
         function extractParams(...params) {
 
             let parameters=[].slice.call(arguments);
