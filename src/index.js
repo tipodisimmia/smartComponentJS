@@ -1,4 +1,5 @@
 import AppRegistry from './AppRegistry';
 import Component from './Component';
 
-export  {AppRegistry,Component};
+export default Component;
+export {AppRegistry};
