@@ -1,6 +1,6 @@
 {
   "name": "smart-component-js",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "A simple javascript library for component building",
   "main": "build/SmartComponentJS.js",
   "scripts": {
