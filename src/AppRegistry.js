@@ -22,12 +22,14 @@ class AppRegistry {
     }
 
     initComponentByName(element,componentName){
+        let instance=null;
         try{
             var clazz = this.getComponent(componentName);
-            new clazz(element); //Start Up Component
+            instance=new clazz(element); //Start Up Component
         }catch(e){
             console.error("Error when trying to instance Component " + componentName +": "+ e);
         }
+        return instance;
     }
 
     getComponent(name) {

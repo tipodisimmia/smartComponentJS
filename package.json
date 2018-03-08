@@ -5,7 +5,7 @@
   "main": "build/SmartComponentJS.js",
   "module": "build/SmartComponentJS.js",
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/*.js --require babel-register --reporter spec || exit 0",
+    "test": "rollup  -c test/rollup.config.js",
     "build": "rollup  -c"
   },
   "repository": {
