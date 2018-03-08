@@ -13,6 +13,7 @@ describe('TestComponent1 - Instance by name', function() {
         assert.equal(testComponent.components["TestComponent1"].componentReferenceName, "TestComponent1");
     });
 
+
 });
 
 
