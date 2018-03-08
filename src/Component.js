@@ -101,27 +101,35 @@ class Component {
                 return m.addedNodes.length > 0;
             }).reduce((prev, current) => {
                 let nodes=current.addedNodes;
-                nodes.forEach((node)=>{
-                    if(node.querySelectorAll){
 
-                        let componentClickElements =node.querySelectorAll('[component-click]');
-                        if(node.getAttribute("component-click")){
-                            prev.push(node);
-                        }
+                if(nodes.length){
+                    for (var i = 0; i < nodes.length; i++) {
+                        let node=nodes[i];
 
-                        if (componentClickElements.length > 0) {
-                            for (let i = 0; i < componentClickElements.length; i++) {
-                                prev.push(componentClickElements[i]);
+                        if(node.querySelectorAll){
+                            let componentClickElements =node.querySelectorAll('[component-click]');
+                            if(node.getAttribute("component-click")){
+                                prev.push(node);
+                            }
+
+                            if (componentClickElements.length > 0) {
+                                for (let i = 0; i < componentClickElements.length; i++) {
+                                    prev.push(componentClickElements[i]);
+                                }
                             }
                         }
                     }
-                })
+                }
+
                 return prev;
             }, []);
 
-            mutationElements.forEach((element)=>{
-                this.bindComponentClick(element);
-            })
+            if(mutationElements.length){
+                for (var i = 0; i < mutationElements.length; i++) {
+                    this.bindComponentClick(mutationElements[i]);
+                }
+
+            }
     }
 }
 
