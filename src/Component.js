@@ -40,6 +40,12 @@ class Component {
             this.bindComponentClick(this.element);
         }
 
+        let nodesToBind =this.getComponentClickNodeToBind([this.element]);
+        if(nodesToBind.length) {
+            for (var i = 0; i < nodesToBind.length; i++) {
+                this.checkComponentsHierarchyAndBindClick(nodesToBind[i]);
+            }
+        }
     }
 
     generateUid() {
@@ -72,6 +78,7 @@ class Component {
     }
 
     loadChildComponents(parentComponent) {
+        let componentsLoaded=[];
         var componentsEls = this.element.querySelectorAll('[component]');
         for (var i = 0; i < componentsEls.length; i++) {
             var componentId = componentsEls[i].getAttribute('component-id');
@@ -79,57 +86,85 @@ class Component {
             if (!componentId) {
                 var component = componentsEls[i].getAttribute('component');
                 var Clazz = AppRegistry.getComponent(component);
-                new Clazz(componentsEls[i],parentComponent || this);
+                componentsLoaded.push( new Clazz(componentsEls[i],parentComponent || this));
             }
+        }
+        return componentsLoaded;
+    }
+
+    bindComponentClick(node) {
+
+        let isAlreadyBinded=this.bindedElements["click"].reduce((accumulator,currentNode)=>{
+            return accumulator || currentNode.isEqualNode(node);
+        },false);
+
+        if(!isAlreadyBinded){
+            this.bindedElements["click"].push(node);
+            node.addEventListener('click', (e)=> {
+                this.clickHandler(e)
+            });
         }
     }
 
-    bindComponentClick(node){
-            let isAlreadyBinded=this.bindedElements["click"].reduce((accumulator,currentNode)=>{
-                return accumulator || currentNode.isEqualNode(node);
-            },false);
-            if(!isAlreadyBinded){
-                this.bindedElements["click"].push(node);
-                node.addEventListener('click', (e)=> {
-                    this.clickHandler(e)
-                });
-            }
+    checkComponentsHierarchyAndBindClick(node){
+        let parentsComponent= this.getDomElementParents( node, '[component-reference-name]');
+        if(parentsComponent.length>0 && parentsComponent[0].getAttribute("component-reference-name")==this.componentReferenceName){
+            this.bindComponentClick(node);
+        }else{
+            return;
+        }
     }
 
+    getDomElementParents(elem, selector){
+        // Setup parents array
+        var parents = [];
+        // Get matching parent elements
+        for ( ; elem && elem !== document; elem = elem.parentNode ) {
+            // Add matching parents to array
+            if (selector) {
+                if (elem.matches(selector)) {
+                    parents.push(elem);
+                }
+            } else {
+                parents.push(elem);
+            }
+        }
+        return parents;
+    }
+
+
     mutationHandler(mutationsList){
+        if(mutationsList && mutationsList.length>0){
             let mutationElements= mutationsList.filter((m) => {
                 return m.addedNodes.length > 0;
             }).reduce((prev, current) => {
-                let nodes=current.addedNodes;
-
-                if(nodes.length){
-                    for (var i = 0; i < nodes.length; i++) {
-                        let node=nodes[i];
-
-                        if(node.querySelectorAll){
-                            let componentClickElements =node.querySelectorAll('[component-click]');
-                            if(node.getAttribute("component-click")){
-                                prev.push(node);
-                            }
-
-                            if (componentClickElements.length > 0) {
-                                for (let i = 0; i < componentClickElements.length; i++) {
-                                    prev.push(componentClickElements[i]);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                return prev;
+                return prev.concat(this.getComponentClickNodeToBind(current.addedNodes));
             }, []);
 
             if(mutationElements.length){
                 for (var i = 0; i < mutationElements.length; i++) {
-                    this.bindComponentClick(mutationElements[i]);
+                    this.checkComponentsHierarchyAndBindClick(mutationElements[i]);
                 }
-
             }
+        }
+    }
+
+    getComponentClickNodeToBind(modesToCheck){
+        let nodesToBind=[];
+        if(modesToCheck.length){
+            for (var i = 0; i < modesToCheck.length; i++) {
+                let node=modesToCheck[i];
+                if(node.querySelectorAll){
+                    let componentClickElements =node.querySelectorAll('[component-click]');
+                    if (componentClickElements.length > 0) {
+                        for (let i = 0; i < componentClickElements.length; i++) {
+                            nodesToBind.push(componentClickElements[i]);
+                        }
+                    }
+                }
+            }
+        }
+        return nodesToBind;
     }
 }
 

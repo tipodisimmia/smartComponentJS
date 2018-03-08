@@ -2,11 +2,18 @@
 <head>
     <meta charset="utf-8">
     <title>Smart component Tests</title>
-    <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+    <link href="../node_modules/mocha/mocha.css" rel="stylesheet" />
 </head>
 <body>
 <div id="mocha"></div>
-<div component='TestComponent' component-reference-name="TestComponent1"></div>
+<div component='TestComponent' component-reference-name="TestComponent1">
+
+    <div component='TestComponent' component-reference-name="TestComponent2">
+        <button component-click="clickHandler()">Click Handler</button>
+    </div>
+
+</div>
+</div>
 <script src="../node_modules/mocha/mocha.js"></script>
 <script src="../node_modules/chai/chai.js"></script>
 

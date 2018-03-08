@@ -1,4 +1,5 @@
 import {Component} from "../../build/SmartComponentJS";
+import TestManager from "../TestManager";
 
 class TestComponent extends Component{
 
@@ -7,7 +8,8 @@ class TestComponent extends Component{
     }
 
     clickHandler(){
-
+        console.log(this.componentReferenceName);
+        TestManager.addClickEvent(this.componentReferenceName);
     }
 
 }
