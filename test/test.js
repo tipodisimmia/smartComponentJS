@@ -7,6 +7,8 @@ let testComponent=null;
 let testComponent2=null;
 let testComponent3=null;
 let testComponent4=null;
+let testComponent5=null;
+let testComponent6=null;
 
 describe('TestComponent1 - Instance by name', function() {
     testComponent = AppRegistry.initComponentByName(document.querySelector(`[component-reference-name="TestComponent1"]`),"TestComponent");
@@ -73,6 +75,36 @@ describe('TestComponent3 component-click - click on TestComponent3 child on comp
     });
 });
 
+describe('TestComponent5 instanced by javascript - instanced by javascript TestComponent5 under TestComponent2', function() {
+    it('TestComponent5 - should be present like child of TestComponent2', async function() {
+        let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
+        var node=document.createElement('div');
+        node.innerHTML=`<div></div>`;
+        let nodeToAppend=node.childNodes[0];
+        testComponent2DomEl.appendChild(nodeToAppend);
+        testComponent5 = new TestComponent(nodeToAppend,testComponent2,{componentReferenceName:"TestComponent5"});
+        await setTimeout(()=>{},500);
+        assert.equal(testComponent2.components["TestComponent5"].componentReferenceName, "TestComponent5");
+    });
+});
+
+
+describe('TestComponent6 instanced by javascript - instanced by javascript TestComponent6 under TestComponent5', function() {
+    it('TestComponent6 - should be present like child of TestComponent5', async function() {
+        let testComponent5DomEl= document.querySelector(`[component-reference-name="TestComponent5"]`);
+        var node=document.createElement('div');
+        node.innerHTML=`<div>
+                             <button component-click="clickHandler()">TestComponent6 Click Handler</button>
+                        </div>`;
+        let nodeToAppend=node.childNodes[0];
+        testComponent5DomEl.appendChild(nodeToAppend);
+        testComponent6 = new TestComponent(nodeToAppend,testComponent5,{componentReferenceName:"TestComponent6"});
+        await setTimeout(()=>{},500);
+        assert.equal(testComponent5.components["TestComponent6"].componentReferenceName, "TestComponent6");
+    });
+});
+
+//Detect conflict in component-reference-name
 //Destroy con detach listener
 //Init
 //BeforComponetClick

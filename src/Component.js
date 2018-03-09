@@ -1,19 +1,17 @@
 import AppRegistry from './AppRegistry';
 
 class Component {
-
     constructor(element, parentComponent, params) {
+        this.init(element, parentComponent, params);
+    }
 
+    init(element, parentComponent, params){
         this.element = element;
         this.bindedElements = {"click":[]};
         this._componentId =  this.generateUid();
         this.parentComponent = parentComponent || this;
         this.componentReferenceName = null;
         this.params = params || {};
-
-        this.mutationObserver= new MutationObserver(this.mutationHandler.bind(this));
-        this.mutationObserver.observe(element,{attributes: false, childList: true, characterData: false, subtree: true});
-
 
         if(!this.parentComponent.components){
             this.parentComponent.components={};
@@ -46,8 +44,11 @@ class Component {
                 this.checkComponentsHierarchyAndBindClick(nodesToBind[i]);
             }
         }
-    }
 
+        //The mutationObserver is used in order to retrieve and handling component-"event"
+        this.mutationObserver= new MutationObserver(this.eventMutationHandler.bind(this));
+        this.mutationObserver.observe(element,{attributes: false, childList: true, characterData: false, subtree: true});
+    }
     generateUid() {
         return  this.constructor.name+"_"+'xxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0,
@@ -133,7 +134,7 @@ class Component {
     }
 
 
-    mutationHandler(mutationsList){
+    eventMutationHandler(mutationsList){
         if(mutationsList && mutationsList.length>0){
             let mutationElements= mutationsList.filter((m) => {
                 return m.addedNodes.length > 0;
