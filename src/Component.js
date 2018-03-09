@@ -9,19 +9,16 @@ class Component {
         this.element = element;
         this.bindedElements = {"click":[]};
         this._componentId =  this.generateUid();
-        this.parentComponent = parentComponent || this;
+        this.parentComponent = parentComponent;
         this.componentReferenceName = null;
         this.params = params || {};
 
-        if(!this.parentComponent.components){
-            this.parentComponent.components={};
-        }
+
 
         //Serve per recuperare il componente  tramite un nome di fantasia contenuto nell'attributo component-reference-name
         let componentReferenceName = this.params.componentReferenceName ? this.params.componentReferenceName : this.element.getAttribute("component-reference-name");
         componentReferenceName=componentReferenceName || this._componentId;
 
-        this.parentComponent.components[componentReferenceName] = this;
         this.componentReferenceName = componentReferenceName;
         if (!element.getAttribute("component-reference-name")) {
             element.setAttribute("component-reference-name", componentReferenceName);
@@ -31,6 +28,21 @@ class Component {
 
         if(!this.element.getAttribute("component")){
             this.element.setAttribute("component",this.constructor.name);
+        }
+
+
+
+
+        if(this.parentComponent && !this.parentComponent.components){
+            this.parentComponent.components={};
+        }
+
+        if(!this.verifyComponentReferenceNameUnicity()){
+            throw this.componentReferenceName +" componentReferenceName is already used in "+this.parentComponent.componentReferenceName +" hyerarchy";
+        }
+
+        if(this.parentComponent){
+            this.parentComponent.components[componentReferenceName] = this;
         }
 
 
@@ -49,6 +61,11 @@ class Component {
         this.mutationObserver= new MutationObserver(this.eventMutationHandler.bind(this));
         this.mutationObserver.observe(element,{attributes: false, childList: true, characterData: false, subtree: true});
     }
+
+    verifyComponentReferenceNameUnicity(){
+        return  !this.parentComponent || ( this.parentComponent && !this.parentComponent.components[this.componentReferenceName]);
+    }
+
     generateUid() {
         return  this.constructor.name+"_"+'xxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0,

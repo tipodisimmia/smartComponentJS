@@ -15,11 +15,7 @@ describe('TestComponent1 - Instance by name', function() {
     it('TestComponent1 - should be instanced', function() {
         assert.equal(testComponent.constructor.name, "TestComponent");
     });
-    it('TestComponent1 - should be retrieved in components object by reference name ', function() {
-        assert.equal(testComponent.components["TestComponent1"].componentReferenceName, "TestComponent1");
-    });
 });
-
 
 describe('TestComponent1 - load child components passing like parent TestComponent1', function() {
     it('TestComponent2 - TestComponent1 should be present like TestComponent2 parent', function() {
@@ -104,7 +100,29 @@ describe('TestComponent6 instanced by javascript - instanced by javascript TestC
     });
 });
 
-//Detect conflict in component-reference-name
+
+describe('Detect conflict in component-reference-name - i used two times TestComponent6 under TestComponent5 component', function() {
+    it('Not unique component reference name exception is throwed ',  function() {
+        let testComponent5DomEl= document.querySelector(`[component-reference-name="TestComponent5"]`);
+        var node=document.createElement('div');
+        node.innerHTML=`<div component="TestComponent" component-reference-name="TestComponent6">
+                        </div>`;
+        let nodeToAppend=node.childNodes[0];
+        testComponent5DomEl.appendChild(nodeToAppend);
+        let crnException=null
+        try{
+            testComponent5.loadChildComponents();
+        }catch (e){
+            crnException=e;
+            console.log(e);
+        }
+
+        assert.equal(crnException!=null, true);
+    });
+});
+
+
+
 //Destroy con detach listener
 //Init
 //BeforComponetClick
