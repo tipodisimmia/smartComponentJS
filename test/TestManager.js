@@ -12,7 +12,7 @@ class TestManager {
     }
 
     addClickEvent(componentReferenceName){
-        if (typeof  this.clickEventsCounter.componentReferenceName === "undefined"){
+        if (typeof  this.clickEventsCounter[componentReferenceName] === "undefined"){
             this.clickEventsCounter[componentReferenceName]=0;
         }
         this.clickEventsCounter[componentReferenceName]++;

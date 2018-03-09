@@ -1,7 +1,9 @@
 import {AppRegistry}  from "../build/SmartComponentJS";
 import TestManager from "./TestManager";
 import TestComponent from "./testComponents/TestComponent";
-AppRegistry.registerComponents({TestComponent});
+import StopClickPropagationComponent from "./testComponents/StopClickPropagationComponent";
+
+AppRegistry.registerComponents({TestComponent,StopClickPropagationComponent});
 
 let testComponent=null;
 let testComponent2=null;
@@ -101,7 +103,7 @@ describe('TestComponent6 instanced by javascript - instanced by javascript TestC
 });
 
 
-describe('Detect conflict in component-reference-name - i used two times TestComponent6 under TestComponent5 component', function() {
+describe('Detect conflict in component-reference-name - using two times TestComponent6 under TestComponent5 component', function() {
     it('Not unique component reference name exception is throwed ',  function() {
         let testComponent5DomEl= document.querySelector(`[component-reference-name="TestComponent5"]`);
         var node=document.createElement('div');
@@ -122,8 +124,53 @@ describe('Detect conflict in component-reference-name - i used two times TestCom
 });
 
 
+describe('Detect conflict in component-reference-name - using two times TestComponent6 under TestComponent5 component', function() {
+    it('Not unique component reference name exception is throwed ',  function() {
+        let testComponent5DomEl= document.querySelector(`[component-reference-name="TestComponent5"]`);
+        var node=document.createElement('div');
+        node.innerHTML=`<div component="TestComponent" component-reference-name="TestComponent6">
+                        </div>`;
+        let nodeToAppend=node.childNodes[0];
+        testComponent5DomEl.appendChild(nodeToAppend);
+        let crnException=null
+        try{
+            testComponent5.loadChildComponents();
+        }catch (e){
+            crnException=e;
+            console.log(e);
+        }
+        assert.equal(crnException!=null, true);
+    });
+});
 
+
+describe('Handle event - stopping propagation across innested component-click function', function() {
+    it('Stop event propagation Only the first function component-click in the hierarchy is invoked', async function() {
+
+        let clickEventsNumberBefore=TestManager.getClickEvents("StopClickPropagationComponent");
+
+        let testComponent1DomEl= document.querySelector(`[component-reference-name="TestComponent1"]`);
+        var node=document.createElement('div');
+        node.innerHTML=`<div component="StopClickPropagationComponent" component-reference-name="StopClickPropagationComponent">
+                                <a href="javascript:void(0)" component-click="clickHandler('this')">
+                                    StopClickPropagationComponent
+                                    <button component-click="clickHandler()">StopClickPropagationComponent 2</button>
+                                </a>
+                        </div>`;
+        testComponent1DomEl.appendChild(node);
+        testComponent.loadChildComponents();
+        document.querySelector(`[component-reference-name="StopClickPropagationComponent"] button`).click();
+        await setTimeout(()=>{},1000);
+        console.log(TestManager.getClickEvents("StopClickPropagationComponent"));
+        assert.equal(TestManager.getClickEvents("StopClickPropagationComponent"), (clickEventsNumberBefore+1));
+    })
+})
+
+
+//Event handling
 //Destroy con detach listener
+//replace eval method in order to retrieve function parameters
+
 //Init
 //BeforComponetClick
 //Lanciare eccezione se vengono trovate componentReferenceName registrate o se il componentReferenceName coincide con quella del padre

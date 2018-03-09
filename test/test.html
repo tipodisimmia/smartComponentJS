@@ -6,13 +6,14 @@
 </head>
 <body>
 <div id="mocha"></div>
-<div component='TestComponent' component-reference-name="TestComponent1">
+<div class="test-markup">
+    <div component='TestComponent' component-reference-name="TestComponent1">
 
-    <div component='TestComponent' component-reference-name="TestComponent2">
-        <button component-click="clickHandler()">TestComponent2 Click Handler</button>
+        <div component='TestComponent' component-reference-name="TestComponent2">
+            <button component-click="clickHandler()">TestComponent2 Click Handler</button>
+        </div>
+
     </div>
-
-</div>
 </div>
 <script src="../node_modules/mocha/mocha.js"></script>
 <script src="../node_modules/chai/chai.js"></script>
