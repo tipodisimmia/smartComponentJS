@@ -28,7 +28,7 @@ describe('TestComponent1 - load child components passing like parent TestCompone
     });
 });
 
-describe('TestComponent2 component-click - click on TestComponent2 child with component-click attribute', function() {
+describe('TestComponent2 component-click - click on TestComponent2 child on component-click attribute', function() {
     it('TestComponent2 - clickEventsNumber must be increase of one', async function() {
         let clickEventsNumberBefore=TestManager.getClickEvents("TestComponent2");
         document.querySelector(`[component-reference-name="TestComponent2"] [component-click="clickHandler()"]`).click();
@@ -54,7 +54,7 @@ describe('TestComponent3 added dinamically - add dinamically TestComponent3 like
 });
 
 
-describe('TestComponent3 component-click - click on TestComponent child with component-click attribute', function() {
+describe('TestComponent3 component-click - click on TestComponent3 child on component-click attribute', function() {
     it('TestComponent3 - clickEventsNumber must be increase of one', async function() {
         let clickEventsNumberBefore=TestManager.getClickEvents("TestComponent3");
         document.querySelector(`[component-reference-name="TestComponent3"] [component-click="clickHandler()"]`).click();
