@@ -6,6 +6,7 @@ AppRegistry.registerComponents({TestComponent});
 let testComponent=null;
 let testComponent2=null;
 let testComponent3=null;
+let testComponent4=null;
 
 describe('TestComponent1 - Instance by name', function() {
     testComponent = AppRegistry.initComponentByName(document.querySelector(`[component-reference-name="TestComponent1"]`),"TestComponent");
@@ -38,18 +39,27 @@ describe('TestComponent2 component-click - click on TestComponent2 child on comp
 });
 
 
-describe('TestComponent3 added dinamically - add dinamically TestComponent3 like child of TestComponent2', function() {
-    it('TestComponent3 - should be present like child of TestComponent2', async function() {
+describe('TestComponent3/4 added dinamically - add dinamically TestComponent3 like child of TestComponent2', function() {
+    it('TestComponent3/4 - should be present like child of TestComponent2', async function() {
         let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
         var node=document.createElement('div');
-        node.innerHTML=`<div component="TestComponent"  component-reference-name="TestComponent3">
-            <button component-click="clickHandler()">TestComponent3 Click Handler</button>
+        node.innerHTML=`
+        <div>
+            <div component="TestComponent"  component-reference-name="TestComponent3">
+                <button component-click="clickHandler()">TestComponent3 Click Handler</button>
+            </div>
+    
+            <div component="TestComponent"  component-reference-name="TestComponent4">
+                <button component-click="clickHandler()">TestComponent4 Click Handler</button>
+            </div>
         </div>`;
-        testComponent2DomEl.appendChild(node.childNodes[0]);
+        testComponent2DomEl.appendChild(node.childNodes[1]);
         testComponent2.loadChildComponents();
         await setTimeout(()=>{},500);
         testComponent3=testComponent2.components["TestComponent3"];
+        testComponent4=testComponent2.components["TestComponent4"];
         assert.equal(testComponent2.components["TestComponent3"].componentReferenceName, "TestComponent3");
+        assert.equal(testComponent2.components["TestComponent4"].componentReferenceName, "TestComponent4");
     });
 });
 
