@@ -1,4 +1,4 @@
-import AppRegistry from './AppRegistry';
+import ComponentManager from './ComponentManager';
 
 class Component {
     constructor(element, parentComponent, params) {
@@ -6,7 +6,7 @@ class Component {
     }
 
     init(element, parentComponent, params){
-        this.element = element;
+        this.garbageCollectorRootElement = element;
         this.bindedElements = {"click":[]};
         this._componentId =  this.generateUid();
         this.parentComponent = parentComponent;
@@ -16,7 +16,7 @@ class Component {
 
 
         //Serve per recuperare il componente  tramite un nome di fantasia contenuto nell'attributo component-reference-name
-        let componentReferenceName = this.params.componentReferenceName ? this.params.componentReferenceName : this.element.getAttribute("component-reference-name");
+        let componentReferenceName = this.params.componentReferenceName ? this.params.componentReferenceName : this.garbageCollectorRootElement.getAttribute("component-reference-name");
         componentReferenceName=componentReferenceName || this._componentId;
 
         this.componentReferenceName = componentReferenceName;
@@ -24,33 +24,37 @@ class Component {
             element.setAttribute("component-reference-name", componentReferenceName);
         }
 
-        this.element.setAttribute("component-id",this._componentId);
-
-        if(!this.element.getAttribute("component")){
-            this.element.setAttribute("component",this.constructor.name);
+        if(!this.verifyComponentReferenceNameUnicity()){
+            throw this.componentReferenceName +" componentReferenceName is already used in "+this.parentComponent.componentReferenceName +" hyerarchy";
+            return false;
         }
 
+        ComponentManager.registerComponentInstance(this._componentId,this);
 
+
+        this.garbageCollectorRootElement.setAttribute("component-id",this._componentId);
+
+        if(!this.garbageCollectorRootElement.getAttribute("component")){
+            this.garbageCollectorRootElement.setAttribute("component",this.constructor.name);
+        }
 
 
         if(this.parentComponent && !this.parentComponent.components){
             this.parentComponent.components={};
         }
 
-        if(!this.verifyComponentReferenceNameUnicity()){
-            throw this.componentReferenceName +" componentReferenceName is already used in "+this.parentComponent.componentReferenceName +" hyerarchy";
-        }
+
 
         if(this.parentComponent){
             this.parentComponent.components[componentReferenceName] = this;
         }
 
 
-        if(this.element.getAttribute("component-click")){
-            this.bindComponentClick(this.element);
+        if(this.garbageCollectorRootElement.getAttribute("component-click")){
+            this.bindComponentClick(this.garbageCollectorRootElement);
         }
 
-        let nodesToBind =this.getComponentClickNodeToBind([this.element]);
+        let nodesToBind =this.getComponentClickNodeToBind([this.garbageCollectorRootElement]);
         if(nodesToBind.length) {
             for (var i = 0; i < nodesToBind.length; i++) {
                 this.checkComponentsHierarchyAndBindClick(nodesToBind[i]);
@@ -58,12 +62,20 @@ class Component {
         }
 
         //The mutationObserver is used in order to retrieve and handling component-"event"
-        this.mutationObserver= new MutationObserver(this.eventMutationHandler.bind(this));
-        this.mutationObserver.observe(element,{attributes: false, childList: true, characterData: false, subtree: true});
+        this.mutationObserver= new MutationObserver(this.mutationHandler.bind(this));
+        this.mutationObserver.observe(this.garbageCollectorRootElement.parentNode,{attributes: false, childList: true, characterData: false, subtree: true});
+
     }
 
+    mutationHandler(mutationsList){
+        this.eventMutationHandler(mutationsList);
+       this.destroyMutationHandler(mutationsList);
+    }
+
+
+
     verifyComponentReferenceNameUnicity(){
-        return  !this.parentComponent || ( this.parentComponent && !this.parentComponent.components[this.componentReferenceName]);
+        return  !this.parentComponent || !this.parentComponent.components  ||  !this.parentComponent.components[this.componentReferenceName];
     }
 
     generateUid() {
@@ -97,13 +109,13 @@ class Component {
 
     loadChildComponents(parentComponent) {
         let componentsLoaded=[];
-        var componentsEls = this.element.querySelectorAll('[component]');
+        var componentsEls = this.garbageCollectorRootElement.querySelectorAll('[component]');
         for (var i = 0; i < componentsEls.length; i++) {
             var componentId = componentsEls[i].getAttribute('component-id');
 
             if (!componentId) {
                 var component = componentsEls[i].getAttribute('component');
-                var Clazz = AppRegistry.getComponent(component);
+                var Clazz = ComponentManager.getComponent(component);
                 componentsLoaded.push( new Clazz(componentsEls[i],parentComponent || this));
             }
         }
@@ -167,6 +179,11 @@ class Component {
         }
     }
 
+    destroyMutationHandler(mutationsList){
+      //console.log(this.componentReferenceName +" -" +mutationsList);
+    }
+
+
     getComponentClickNodeToBind(modesToCheck){
         let nodesToBind=[];
         if(modesToCheck.length){
@@ -184,6 +201,28 @@ class Component {
         }
         return nodesToBind;
     }
+
+
+    /**
+     * Called by ComponentManager  when dom component is removed, otherwise you can also call it directly if you need or override it
+     */
+
+    destroy(){
+        console.log(this.componentReferenceName + " destroyed");
+        this.mutationObserver.disconnect();
+        ComponentManager.removeComponentInstance(this._componentId);
+        if(this.garbageCollectorRootElement.isConnected){
+            this.garbageCollectorRootElement.remove();
+        }
+
+        // for all properties
+        for (const prop of Object.getOwnPropertyNames(this)) {
+            delete this[prop];
+        }
+
+
+    }
+
 }
 
 export default  Component;

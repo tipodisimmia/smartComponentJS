@@ -1,4 +1,4 @@
-import AppRegistry from './AppRegistry';
+import ComponentManager from './ComponentManager';
 import Component from './Component';
 
-export {AppRegistry,Component};
+export {ComponentManager,Component};

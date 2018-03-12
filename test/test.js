@@ -1,9 +1,9 @@
-import {AppRegistry}  from "../build/SmartComponentJS";
+import {ComponentManager}  from "../build/SmartComponentJS";
 import TestManager from "./TestManager";
 import TestComponent from "./testComponents/TestComponent";
 import StopClickPropagationComponent from "./testComponents/StopClickPropagationComponent";
 
-AppRegistry.registerComponents({TestComponent,StopClickPropagationComponent});
+ComponentManager.registerComponents({TestComponent,StopClickPropagationComponent});
 
 let testComponent=null;
 let testComponent2=null;
@@ -11,9 +11,10 @@ let testComponent3=null;
 let testComponent4=null;
 let testComponent5=null;
 let testComponent6=null;
+let stopClickPropagationComponent=null;
 
 describe('TestComponent1 - Instance by name', function() {
-    testComponent = AppRegistry.initComponentByName(document.querySelector(`[component-reference-name="TestComponent1"]`),"TestComponent");
+    testComponent = ComponentManager.initComponentByName(document.querySelector(`[component-reference-name="TestComponent1"]`),"TestComponent");
     it('TestComponent1 - should be instanced', function() {
         assert.equal(testComponent.constructor.name, "TestComponent");
     });
@@ -124,25 +125,6 @@ describe('Detect conflict in component-reference-name - using two times TestComp
 });
 
 
-describe('Detect conflict in component-reference-name - using two times TestComponent6 under TestComponent5 component', function() {
-    it('Not unique component reference name exception is throwed ',  function() {
-        let testComponent5DomEl= document.querySelector(`[component-reference-name="TestComponent5"]`);
-        var node=document.createElement('div');
-        node.innerHTML=`<div component="TestComponent" component-reference-name="TestComponent6">
-                        </div>`;
-        let nodeToAppend=node.childNodes[0];
-        testComponent5DomEl.appendChild(nodeToAppend);
-        let crnException=null
-        try{
-            testComponent5.loadChildComponents();
-        }catch (e){
-            crnException=e;
-            console.log(e);
-        }
-        assert.equal(crnException!=null, true);
-    });
-});
-
 
 describe('Handle event - stopping propagation across innested component-click function', function() {
     it('Stop event propagation Only the first function component-click in the hierarchy is invoked', async function() {
@@ -158,7 +140,8 @@ describe('Handle event - stopping propagation across innested component-click fu
                                 </a>
                         </div>`;
         testComponent1DomEl.appendChild(node);
-        testComponent.loadChildComponents();
+        let loadedComponents = testComponent.loadChildComponents();
+        stopClickPropagationComponent=loadedComponents[1];
         document.querySelector(`[component-reference-name="StopClickPropagationComponent"] button`).click();
         await setTimeout(()=>{},1000);
         console.log(TestManager.getClickEvents("StopClickPropagationComponent"));
@@ -166,9 +149,37 @@ describe('Handle event - stopping propagation across innested component-click fu
     })
 })
 
+describe('Remove TestComponent2 from dom - remove the dom element that contains the compoenent', function() {
+    it('Component and theirs chilldren must be deallocated', async function() {
 
-//Event handling
-//Destroy con detach listener
+        let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
+
+        await setTimeout(()=>{},1000);
+        testComponent2DomEl.remove();
+        await setTimeout(()=>{},1000);
+
+        let allComponentsRemoved= [testComponent2,testComponent3,testComponent4,testComponent5,testComponent6].reduce((accumulator,current)=>{
+            return accumulator &&  (Object.keys(current).length === 0  || !current);
+        },true);
+
+        assert.equal(allComponentsRemoved, true);
+    })
+})
+
+describe('Remove TestComponent programmatically - remove and theirs chilldren', function() {
+    it('Component and theirs chilldren must be deallocated', async function() {
+        testComponent.destroy();
+        await setTimeout(()=>{},1000);
+        let allComponentsRemoved= [testComponent,stopClickPropagationComponent].reduce((accumulator,current)=>{
+            return accumulator &&  (Object.keys(current).length === 0  || !current);
+        },true);
+
+        assert.equal(allComponentsRemoved, true);
+    })
+})
+
+
+
 //replace eval method in order to retrieve function parameters
 
 //Init
