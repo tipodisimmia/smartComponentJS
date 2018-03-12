@@ -1,10 +1,13 @@
 
 class ComponentManager {
-    constructor(params) {
-        this.params = params || {garbageCollector:true,garbageCollectorRootElement:null}
+    constructor() {
         this.components = [];
-        this.garbageCollectorRootElement=this.params.garbageCollectorRootElement || document.getElementsByTagName("BODY")[0];
         this.componentsInstance={};
+    }
+
+    configure(params){
+        this.params = params || {garbageCollector:true,garbageCollectorRootElement:null};
+        this.garbageCollectorRootElement=this.params.garbageCollectorRootElement || document.getElementsByTagName("BODY")[0];
         if(this.params.garbageCollector){
             this.mutationObserver= new MutationObserver(this.mutationHandler.bind(this));
             this.mutationObserver.observe(this.garbageCollectorRootElement.parentNode,{attributes: false, childList: true, characterData: false, subtree: true});
