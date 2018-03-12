@@ -149,7 +149,7 @@ describe('Handle event - stopping propagation across innested component-click fu
     })
 })
 
-describe('Remove TestComponent2 from dom - remove the dom element that contains the compoenent', function() {
+describe('Remove TestComponent2 from dom - remove the dom element that contains the component', function() {
     it('Component and theirs chilldren must be deallocated', async function() {
 
         let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
@@ -166,7 +166,7 @@ describe('Remove TestComponent2 from dom - remove the dom element that contains 
     })
 })
 
-describe('Remove TestComponent programmatically - remove and theirs chilldren', function() {
+describe('Remove TestComponent programmatically - remove the dom element and theirs children', function() {
     it('Component and theirs chilldren must be deallocated', async function() {
         testComponent.destroy();
         await setTimeout(()=>{},1000);
