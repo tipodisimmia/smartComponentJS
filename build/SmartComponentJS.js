@@ -249,7 +249,25 @@ class SmartComponent {
     }
 
     _getDomElementParents(elem, selector){
-        // Setup parents array
+
+        // Element.matches() polyfill
+        if (!Element.prototype.matches) {
+            Element.prototype.matches =
+                Element.prototype.matchesSelector ||
+                Element.prototype.mozMatchesSelector ||
+                Element.prototype.msMatchesSelector ||
+                Element.prototype.oMatchesSelector ||
+                Element.prototype.webkitMatchesSelector ||
+                function (s) {
+                    var matches = (this.document || this.ownerDocument).querySelectorAll(s),
+                        i = matches.length;
+                    while (--i >= 0 && matches.item(i) !== this) {
+                    }
+                    return i > -1;
+                };
+
+        }
+            // Setup parents array
         var parents = [];
         // Get matching parent elements
         for ( ; elem && elem !== document; elem = elem.parentNode ) {
