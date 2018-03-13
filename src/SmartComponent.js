@@ -1,14 +1,14 @@
-import ComponentManager from './ComponentManager';
+import SmartComponentManager from './SmartComponentManager';
 
-class Component {
+class SmartComponent {
     constructor(element, parentComponent, params) {
-        this.init(element, parentComponent, params);
+        this.smart_init(element, parentComponent, params);
     }
 
-    init(element, parentComponent, params){
+    smart_init(element, parentComponent, params){
         this.garbageCollectorRootElement = element;
         this.bindedElements = {"click":[]};
-        this._componentId =  this.generateUid();
+        this._componentId =  this._generateUid();
         this.parentComponent = parentComponent;
         this.componentReferenceName = null;
         this.params = params || {};
@@ -29,7 +29,7 @@ class Component {
             return false;
         }
 
-        ComponentManager.registerComponentInstance(this._componentId,this);
+        SmartComponentManager.registerComponentInstance(this._componentId,this);
 
 
         this.garbageCollectorRootElement.setAttribute("component-id",this._componentId);
@@ -54,7 +54,7 @@ class Component {
             this.bindComponentClick(this.garbageCollectorRootElement);
         }
 
-        let nodesToBind =this.getComponentClickNodeToBind([this.garbageCollectorRootElement]);
+        let nodesToBind =this._getComponentClickNodeToBind([this.garbageCollectorRootElement]);
         if(nodesToBind.length) {
             for (var i = 0; i < nodesToBind.length; i++) {
                 this.checkComponentsHierarchyAndBindClick(nodesToBind[i]);
@@ -62,23 +62,21 @@ class Component {
         }
 
         //The mutationObserver is used in order to retrieve and handling component-"event"
-        this.mutationObserver= new MutationObserver(this.mutationHandler.bind(this));
+        this.mutationObserver= new MutationObserver(this._mutationHandler.bind(this));
         this.mutationObserver.observe(this.garbageCollectorRootElement.parentNode,{attributes: false, childList: true, characterData: false, subtree: true});
 
     }
 
-    mutationHandler(mutationsList){
-        this.eventMutationHandler(mutationsList);
-       this.destroyMutationHandler(mutationsList);
+    _mutationHandler(mutationsList){
+        this._eventMutationHandler(mutationsList);
     }
-
 
 
     verifyComponentReferenceNameUnicity(){
         return  !this.parentComponent || !this.parentComponent.components  ||  !this.parentComponent.components[this.componentReferenceName];
     }
 
-    generateUid() {
+    _generateUid() {
         return  this.constructor.name+"_"+'xxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0,
                 v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -86,7 +84,7 @@ class Component {
         });
     }
 
-    clickHandler(ev) {
+    smart_clickHandler(ev) {
         let functionCode = ev.currentTarget.getAttribute('component-click');
         let functionName = functionCode.split("(")[0];
 
@@ -115,14 +113,14 @@ class Component {
 
             if (!componentId) {
                 var component = componentsEls[i].getAttribute('component');
-                var Clazz = ComponentManager.getComponent(component);
+                var Clazz = SmartComponentManager.getComponent(component);
                 componentsLoaded.push( new Clazz(componentsEls[i],parentComponent || this));
             }
         }
         return componentsLoaded;
     }
 
-    bindComponentClick(node) {
+    _bindComponentClick(node) {
 
         let isAlreadyBinded=this.bindedElements["click"].reduce((accumulator,currentNode)=>{
             return accumulator || currentNode.isEqualNode(node);
@@ -131,21 +129,21 @@ class Component {
         if(!isAlreadyBinded){
             this.bindedElements["click"].push(node);
             node.addEventListener('click', (e)=> {
-                this.clickHandler(e)
+                this.smart_clickHandler(e)
             });
         }
     }
 
     checkComponentsHierarchyAndBindClick(node){
-        let parentsComponent= this.getDomElementParents( node, '[component-reference-name]');
+        let parentsComponent= this._getDomElementParents( node, '[component-reference-name]');
         if(parentsComponent.length>0 && parentsComponent[0].getAttribute("component-reference-name")==this.componentReferenceName){
-            this.bindComponentClick(node);
+            this._bindComponentClick(node);
         }else{
             return;
         }
     }
 
-    getDomElementParents(elem, selector){
+    _getDomElementParents(elem, selector){
         // Setup parents array
         var parents = [];
         // Get matching parent elements
@@ -163,12 +161,12 @@ class Component {
     }
 
 
-    eventMutationHandler(mutationsList){
+    _eventMutationHandler(mutationsList){
         if(mutationsList && mutationsList.length>0){
             let mutationElements= mutationsList.filter((m) => {
                 return m.addedNodes.length > 0;
             }).reduce((prev, current) => {
-                return prev.concat(this.getComponentClickNodeToBind(current.addedNodes));
+                return prev.concat(this._getComponentClickNodeToBind(current.addedNodes));
             }, []);
 
             if(mutationElements.length){
@@ -179,12 +177,9 @@ class Component {
         }
     }
 
-    destroyMutationHandler(mutationsList){
-      //console.log(this.componentReferenceName +" -" +mutationsList);
-    }
 
 
-    getComponentClickNodeToBind(modesToCheck){
+    _getComponentClickNodeToBind(modesToCheck){
         let nodesToBind=[];
         if(modesToCheck.length){
             for (var i = 0; i < modesToCheck.length; i++) {
@@ -210,7 +205,7 @@ class Component {
     destroy(){
         console.log(this.componentReferenceName + " destroyed");
         this.mutationObserver.disconnect();
-        ComponentManager.removeComponentInstance(this._componentId);
+        SmartComponentManager.removeComponentInstance(this._componentId);
         if(this.garbageCollectorRootElement.isConnected){
             this.garbageCollectorRootElement.remove();
         }
@@ -225,4 +220,4 @@ class Component {
 
 }
 
-export default  Component;
+export default  SmartComponent;

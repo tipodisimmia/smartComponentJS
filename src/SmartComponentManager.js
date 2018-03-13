@@ -1,5 +1,5 @@
 
-class ComponentManager {
+class SmartComponentManager {
     constructor() {
         this.components = [];
         this.componentsInstance={};
@@ -101,4 +101,4 @@ class ComponentManager {
     }
 }
 
-export default new ComponentManager();
+export default new SmartComponentManager();

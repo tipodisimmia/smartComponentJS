@@ -1,9 +1,10 @@
-import {ComponentManager}  from "../build/SmartComponentJS";
+import {SmartComponentManager}  from "../build/SmartComponentJS";
 import TestManager from "./TestManager";
 import TestComponent from "./testComponents/TestComponent";
 import StopClickPropagationComponent from "./testComponents/StopClickPropagationComponent";
 
-ComponentManager.registerComponents({TestComponent,StopClickPropagationComponent});
+SmartComponentManager.registerComponents({TestComponent,StopClickPropagationComponent});
+SmartComponentManager.configure();
 
 let testComponent=null;
 let testComponent2=null;
@@ -14,7 +15,7 @@ let testComponent6=null;
 let stopClickPropagationComponent=null;
 
 describe('TestComponent1 - Instance by name', function() {
-    testComponent = ComponentManager.initComponentByName(document.querySelector(`[component-reference-name="TestComponent1"]`),"TestComponent");
+    testComponent = SmartComponentManager.initComponentByName(document.querySelector(`[component-reference-name="TestComponent1"]`),"TestComponent");
     it('TestComponent1 - should be instanced', function() {
         assert.equal(testComponent.constructor.name, "TestComponent");
     });
@@ -136,7 +137,7 @@ describe('Handle event - stopping propagation across innested component-click fu
         node.innerHTML=`<div component="StopClickPropagationComponent" component-reference-name="StopClickPropagationComponent">
                                 <a href="javascript:void(0)" component-click="clickHandler('this')">
                                     StopClickPropagationComponent
-                                    <button component-click="clickHandler()">StopClickPropagationComponent 2</button>
+                                    <button component-click="clickHandler('this')">StopClickPropagationComponent 2</button>
                                 </a>
                         </div>`;
         testComponent1DomEl.appendChild(node);
@@ -154,7 +155,6 @@ describe('Remove TestComponent2 from dom - remove the dom element that contains 
 
         let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
 
-        await setTimeout(()=>{},1000);
         testComponent2DomEl.remove();
         await setTimeout(()=>{},1000);
 
@@ -169,7 +169,7 @@ describe('Remove TestComponent2 from dom - remove the dom element that contains 
 describe('Remove TestComponent programmatically - remove the dom element and theirs children', function() {
     it('Component and theirs chilldren must be deallocated', async function() {
         testComponent.destroy();
-        await setTimeout(()=>{},1000);
+        await setTimeout(()=>{},2000);
         let allComponentsRemoved= [testComponent,stopClickPropagationComponent].reduce((accumulator,current)=>{
             return accumulator &&  (Object.keys(current).length === 0  || !current);
         },true);

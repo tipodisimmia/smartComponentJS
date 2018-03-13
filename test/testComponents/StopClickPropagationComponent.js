@@ -1,13 +1,16 @@
-import {Component} from "../../build/SmartComponentJS";
+import {SmartComponent} from "../../build/SmartComponentJS";
 import TestManager from "../TestManager";
 
-class StopClickPropagationComponent extends Component{
+class StopClickPropagationComponent extends SmartComponent{
 
     constructor(element,parentComponent,params) {
         super(element,parentComponent,params);
     }
+
     clickHandler(ev){
-        ev.stopPropagation();
+        if(ev){
+            ev.stopPropagation();
+        }
         TestManager.addClickEvent(this.componentReferenceName);
     }
 }

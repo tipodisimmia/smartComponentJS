@@ -1,4 +1,4 @@
-import ComponentManager from './ComponentManager';
-import Component from './Component';
+import SmartComponentManager from './SmartComponentManager';
+import SmartComponent from './SmartComponent';
 
-export {ComponentManager,Component};
+export {SmartComponentManager,SmartComponent};
