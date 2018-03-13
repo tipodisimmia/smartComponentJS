@@ -4,7 +4,7 @@ import TestComponent from "./testComponents/TestComponent";
 import StopClickPropagationComponent from "./testComponents/StopClickPropagationComponent";
 
 SmartComponentManager.registerComponents({TestComponent,StopClickPropagationComponent});
-SmartComponentManager.configure();
+SmartComponentManager.configure({garbageCollector:true});
 
 let testComponent=null;
 let testComponent2=null;

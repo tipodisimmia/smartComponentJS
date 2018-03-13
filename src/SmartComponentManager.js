@@ -6,11 +6,14 @@ class SmartComponentManager {
     }
 
     configure(params){
-        this.params = params || {garbageCollector:true,garbageCollectorRootElement:null};
-        this.garbageCollectorRootElement=this.params.garbageCollectorRootElement || document.getElementsByTagName("BODY")[0];
+        this.params = params || {garbageCollector:false,garbageCollectorRootElement:null};
+
         if(this.params.garbageCollector){
-            this.mutationObserver= new MutationObserver(this.mutationHandler.bind(this));
-            this.mutationObserver.observe(this.garbageCollectorRootElement.parentNode,{attributes: false, childList: true, characterData: false, subtree: true});
+            this.garbageCollectorRootElement=this.params.garbageCollectorRootElement || document.getElementsByTagName("BODY")[0];
+            if(this.params.garbageCollector){
+                this.mutationObserver= new MutationObserver(this.mutationHandler.bind(this));
+                this.mutationObserver.observe(this.garbageCollectorRootElement.parentNode,{attributes: false, childList: true, characterData: false, subtree: true});
+            }
         }
     }
 
