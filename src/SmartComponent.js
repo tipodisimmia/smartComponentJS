@@ -6,7 +6,7 @@ class SmartComponent {
     }
 
     smart_init(element, parentComponent, params){
-        this.garbageCollectorRootElement = element;
+        this.element = element;
         this.bindedElements = {"click":[]};
         this._componentId =  this._generateUid();
         this.parentComponent = parentComponent;
@@ -16,7 +16,7 @@ class SmartComponent {
 
 
         //Serve per recuperare il componente  tramite un nome di fantasia contenuto nell'attributo component-reference-name
-        let componentReferenceName = this.params.componentReferenceName ? this.params.componentReferenceName : this.garbageCollectorRootElement.getAttribute("component-reference-name");
+        let componentReferenceName = this.params.componentReferenceName ? this.params.componentReferenceName : this.element.getAttribute("component-reference-name");
         componentReferenceName=componentReferenceName || this._componentId;
 
         this.componentReferenceName = componentReferenceName;
@@ -32,10 +32,10 @@ class SmartComponent {
         SmartComponentManager.registerComponentInstance(this._componentId,this);
 
 
-        this.garbageCollectorRootElement.setAttribute("component-id",this._componentId);
+        this.element.setAttribute("component-id",this._componentId);
 
-        if(!this.garbageCollectorRootElement.getAttribute("component")){
-            this.garbageCollectorRootElement.setAttribute("component",this.constructor.name);
+        if(!this.element.getAttribute("component")){
+            this.element.setAttribute("component",this.constructor.name);
         }
 
 
@@ -50,11 +50,11 @@ class SmartComponent {
         }
 
 
-        if(this.garbageCollectorRootElement.getAttribute("component-click")){
-            this.bindComponentClick(this.garbageCollectorRootElement);
+        if(this.element.getAttribute("component-click")){
+            this.bindComponentClick(this.element);
         }
 
-        let nodesToBind =this._getComponentClickNodeToBind([this.garbageCollectorRootElement]);
+        let nodesToBind =this._getComponentClickNodeToBind([this.element]);
         if(nodesToBind.length) {
             for (var i = 0; i < nodesToBind.length; i++) {
                 this.checkComponentsHierarchyAndBindClick(nodesToBind[i]);
@@ -63,7 +63,7 @@ class SmartComponent {
 
         //The mutationObserver is used in order to retrieve and handling component-"event"
         this.mutationObserver= new MutationObserver(this._mutationHandler.bind(this));
-        this.mutationObserver.observe(this.garbageCollectorRootElement.parentNode,{attributes: false, childList: true, characterData: false, subtree: true});
+        this.mutationObserver.observe(this.element.parentNode,{attributes: false, childList: true, characterData: false, subtree: true});
 
     }
 
@@ -107,7 +107,7 @@ class SmartComponent {
 
     loadChildComponents(parentComponent) {
         let componentsLoaded=[];
-        var componentsEls = this.garbageCollectorRootElement.querySelectorAll('[component]');
+        var componentsEls = this.element.querySelectorAll('[component]');
         for (var i = 0; i < componentsEls.length; i++) {
             var componentId = componentsEls[i].getAttribute('component-id');
 
@@ -206,8 +206,8 @@ class SmartComponent {
         console.log(this.componentReferenceName + " destroyed");
         this.mutationObserver.disconnect();
         SmartComponentManager.removeComponentInstance(this._componentId);
-        if(this.garbageCollectorRootElement.isConnected){
-            this.garbageCollectorRootElement.remove();
+        if(this.element.isConnected){
+            this.element.remove();
         }
 
         // for all properties
