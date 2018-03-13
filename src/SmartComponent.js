@@ -186,6 +186,9 @@ class SmartComponent {
                 let node=modesToCheck[i];
                 if(node.querySelectorAll){
                     let componentClickElements =node.querySelectorAll('[component-click]');
+                    if(node.getAttribute('component-click')){
+                        nodesToBind.push(node);
+                    }
                     if (componentClickElements.length > 0) {
                         for (let i = 0; i < componentClickElements.length; i++) {
                             nodesToBind.push(componentClickElements[i]);
@@ -202,7 +205,7 @@ class SmartComponent {
      * Called by ComponentManager  when dom component is removed, otherwise you can also call it directly if you need or override it
      */
 
-    destroy(){
+    smart_destroy(){
         console.log(this.componentReferenceName + " destroyed");
         this.mutationObserver.disconnect();
         SmartComponentManager.removeComponentInstance(this._componentId);

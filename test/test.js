@@ -168,7 +168,7 @@ describe('Remove TestComponent2 from dom - remove the dom element that contains 
 
 describe('Remove TestComponent programmatically - remove the dom element and theirs children', function() {
     it('Component and theirs chilldren must be deallocated', async function() {
-        testComponent.destroy();
+        testComponent.smart_destroy();
         await setTimeout(()=>{},2000);
         let allComponentsRemoved= [testComponent,stopClickPropagationComponent].reduce((accumulator,current)=>{
             return accumulator &&  (Object.keys(current).length === 0  || !current);

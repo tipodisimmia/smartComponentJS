@@ -30,7 +30,7 @@ class SmartComponentManager {
                        if(node.getAttribute && node.getAttribute("component-id")){
                            let componentInstance=this.getComponentInstanceById(node.getAttribute("component-id"));
                            if(componentInstance){
-                               componentInstance.destroy();
+                               componentInstance.smart_destroy();
                            }
                        }
                    })
