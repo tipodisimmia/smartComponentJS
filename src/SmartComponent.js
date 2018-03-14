@@ -35,7 +35,12 @@ class SmartComponent {
         this.element.setAttribute("component-id",this._componentId);
 
         if(!this.element.getAttribute("component")){
-            this.element.setAttribute("component",this.constructor.name);
+            let componentName=this.constructor.name;
+            //ie11 doesn't support function name
+            if(!componentName){
+                componentName = this.constructor.toString().match(/^function\s*([^\s(]+)/)[1];
+            }
+            this.element.setAttribute("component",componentName);
         }
 
 
@@ -99,7 +104,6 @@ class SmartComponent {
                 }
             })
         }
-        //For security reason eval can't be use directly
 
         if(this[functionName]){
             this[functionName].apply(this, eval("extractParams("+functionCode.split("(")[1]))
@@ -228,15 +232,18 @@ class SmartComponent {
         this.mutationObserver.disconnect();
         SmartComponentManager.removeComponentInstance(this._componentId);
         if(this.element.isConnected){
-            this.element.remove();
+            //ie 11 doesn't support remove method
+            if(this.element.remove){
+                this.element.remove();
+            }else{
+                this.element.parentElement.removeChild(this.element);
+            }
         }
 
         // for all properties
         for (const prop of Object.getOwnPropertyNames(this)) {
             delete this[prop];
         }
-
-
     }
 
 }

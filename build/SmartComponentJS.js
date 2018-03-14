@@ -725,7 +725,12 @@ var SmartComponent = function () {
             this.element.setAttribute("component-id", this._componentId);
 
             if (!this.element.getAttribute("component")) {
-                this.element.setAttribute("component", this.constructor.name);
+                var componentName = this.constructor.name;
+                //ie11 doesn't support function name
+                if (!componentName) {
+                    componentName = this.constructor.toString().match(/^function\s*([^\s(]+)/)[1];
+                }
+                this.element.setAttribute("component", componentName);
             }
 
             if (this.parentComponent && !this.parentComponent.components) {
@@ -790,7 +795,6 @@ var SmartComponent = function () {
                     }
                 });
             }
-            //For security reason eval can't be use directly
 
             if (this[functionName]) {
                 this[functionName].apply(this, eval("extractParams(" + functionCode.split("(")[1]));
@@ -918,7 +922,12 @@ var SmartComponent = function () {
             this.mutationObserver.disconnect();
             SmartComponentManager$1.removeComponentInstance(this._componentId);
             if (this.element.isConnected) {
-                this.element.remove();
+                //ie 11 doesn't support remove method
+                if (this.element.remove) {
+                    this.element.remove();
+                } else {
+                    this.element.parentElement.removeChild(this.element);
+                }
             }
 
             // for all properties
@@ -946,6 +955,9 @@ var SmartComponent = function () {
                     }
                 }
             }
+
+            var that = this;
+            that = null;
         }
     }]);
     return SmartComponent;

@@ -725,7 +725,12 @@ var SmartComponent = function () {
             this.element.setAttribute("component-id", this._componentId);
 
             if (!this.element.getAttribute("component")) {
-                this.element.setAttribute("component", this.constructor.name);
+                var componentName = this.constructor.name;
+                //ie11 doesn't support function name
+                if (!componentName) {
+                    componentName = this.constructor.toString().match(/^function\s*([^\s(]+)/)[1];
+                }
+                this.element.setAttribute("component", componentName);
             }
 
             if (this.parentComponent && !this.parentComponent.components) {
@@ -790,7 +795,6 @@ var SmartComponent = function () {
                     }
                 });
             }
-            //For security reason eval can't be use directly
 
             if (this[functionName]) {
                 this[functionName].apply(this, eval("extractParams(" + functionCode.split("(")[1]));
@@ -918,7 +922,12 @@ var SmartComponent = function () {
             this.mutationObserver.disconnect();
             SmartComponentManager$1.removeComponentInstance(this._componentId);
             if (this.element.isConnected) {
-                this.element.remove();
+                //ie 11 doesn't support remove method
+                if (this.element.remove) {
+                    this.element.remove();
+                } else {
+                    this.element.parentElement.removeChild(this.element);
+                }
             }
 
             // for all properties
@@ -946,6 +955,9 @@ var SmartComponent = function () {
                     }
                 }
             }
+
+            var that = this;
+            that = null;
         }
     }]);
     return SmartComponent;
@@ -1033,7 +1045,7 @@ var stopClickPropagationComponent = null;
 describe('TestComponent1 - Instance by name', function () {
     testComponent = SmartComponentManager$1.initComponentByName(document.querySelector("[component-reference-name=\"TestComponent1\"]"), "TestComponent");
     it('TestComponent1 - should be instanced', function () {
-        assert.equal(testComponent.constructor.name, "TestComponent");
+        assert.equal(testComponent.componentReferenceName, "TestComponent1");
     });
 });
 
@@ -1159,7 +1171,12 @@ describe('Remove TestComponent2 from dom - remove the dom element that contains 
     it('Component and theirs chilldren must be deallocated', function (done) {
 
         var testComponent2DomEl = document.querySelector("[component-reference-name=\"TestComponent2\"]");
-        testComponent2DomEl.remove();
+        if (testComponent2DomEl.remove) {
+            testComponent2DomEl.remove();
+        } else {
+            testComponent2DomEl.parentElement.removeChild(testComponent2DomEl);
+        }
+
         setTimeout(function () {
             var allComponentsRemoved = [testComponent2, testComponent3, testComponent4, testComponent5, testComponent6].reduce(function (accumulator, current) {
                 return accumulator && (Object.keys(current).length === 0 || !current);

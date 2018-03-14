@@ -1,4 +1,3 @@
-
 import {SmartComponentManager}  from "../src/index";
 import TestManager from "./TestManager";
 import TestComponent from "./testComponents/TestComponent";
@@ -18,7 +17,7 @@ let stopClickPropagationComponent=null;
 describe('TestComponent1 - Instance by name', function() {
     testComponent = SmartComponentManager.initComponentByName(document.querySelector(`[component-reference-name="TestComponent1"]`),"TestComponent");
     it('TestComponent1 - should be instanced', function() {
-        assert.equal(testComponent.constructor.name, "TestComponent");
+        assert.equal(testComponent.componentReferenceName, "TestComponent1");
     });
 });
 
@@ -173,7 +172,12 @@ describe('Remove TestComponent2 from dom - remove the dom element that contains 
     it('Component and theirs chilldren must be deallocated',  function(done) {
 
         let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
-        testComponent2DomEl.remove();
+        if(testComponent2DomEl.remove){
+            testComponent2DomEl.remove();
+        }else{
+            testComponent2DomEl.parentElement.removeChild(testComponent2DomEl);
+        }
+
         setTimeout(()=>{
             let allComponentsRemoved= [testComponent2,testComponent3,testComponent4,testComponent5,testComponent6].reduce((accumulator,current)=>{
                 return accumulator &&  (Object.keys(current).length === 0  || !current);
