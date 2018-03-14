@@ -1,4 +1,6 @@
 
+import babel from 'rollup-plugin-babel';
+
 export default {
     input: 'src/index.js',
     treeshake: false,
@@ -7,5 +9,10 @@ export default {
         format: 'es',
         sourcemap: 'inline',
         name: "SmartComponentJS"
-    }
+    },
+    plugins: [
+        babel({
+            exclude: 'node_modules/**'
+        })
+    ]
 }
