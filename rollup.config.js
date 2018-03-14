@@ -6,8 +6,7 @@ export default {
     treeshake: false,
     output: {
         file: 'build/SmartComponentJS.js',
-        format: 'es',
-        sourcemap: 'inline',
+        format: 'umd',
         name: "SmartComponentJS"
     },
     plugins: [

@@ -1,4 +1,4 @@
-import {SmartComponent} from "../../build/SmartComponentJS";
+import {SmartComponent} from "../../src/index";
 import TestManager from "../TestManager";
 
 class StopClickPropagationComponent extends SmartComponent{
