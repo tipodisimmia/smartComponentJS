@@ -5,7 +5,7 @@
   "main": "build/SmartComponentJS.js",
   "module": "build/SmartComponentJS.js",
   "scripts": {
-    "build-test": "rollup  -c test/rollup.config.js",
+    "build-test": "rollup  -c test/rollup.config.js ",
     "build": "rollup  -c"
   },
   "repository": {
@@ -24,6 +24,7 @@
   "homepage": "https://github.com/tipodisimmia/smartComponentJS#readme",
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.22.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-latest": "^6.24.1",
     "babel-register": "^6.26.0",

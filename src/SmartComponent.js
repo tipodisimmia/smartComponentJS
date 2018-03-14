@@ -99,6 +99,7 @@ class SmartComponent {
                 }
             })
         }
+        //For security reason eval can't be use directly
 
         if(this[functionName]){
             this[functionName].apply(this, eval("extractParams("+functionCode.split("(")[1]))

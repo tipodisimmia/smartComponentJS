@@ -6,12 +6,11 @@ export default {
     output: {
         file: 'test/testBundle.js',
         format: 'umd',
-        sourcemap: 'inline',
         name: "testBundle"
     },
     plugins: [
         babel({
-            exclude: 'node_modules/**'
+            exclude: 'node_modules/**',
         })
     ]
 }

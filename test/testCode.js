@@ -1,4 +1,3 @@
-
 import {SmartComponentManager}  from "../src/index";
 import TestManager from "./TestManager";
 import TestComponent from "./testComponents/TestComponent";
@@ -33,20 +32,17 @@ describe('TestComponent1 - load child components passing like parent TestCompone
 });
 
 describe('TestComponent2 component-click - click on TestComponent2 child on component-click attribute', function() {
-    it('TestComponent2 - clickEventsNumber must be increase of one',  function(done) {
+    it('TestComponent2 - clickEventsNumber must be increase of one', async function() {
         let clickEventsNumberBefore=TestManager.getClickEvents("TestComponent2");
         document.querySelector(`[component-reference-name="TestComponent2"] [component-click="clickHandler()"]`).click();
-        setTimeout(()=>{
-            assert.equal(TestManager.getClickEvents("TestComponent2"), (clickEventsNumberBefore + 1));
-            done();
-        },500);
-
+        await setTimeout(()=>{},500);
+        assert.equal(TestManager.getClickEvents("TestComponent2"), (clickEventsNumberBefore + 1));
     });
 });
 
 
 describe('TestComponent3/4 added dinamically - add dinamically TestComponent3 like child of TestComponent2', function() {
-    it('TestComponent3/4 - should be present like child of TestComponent2', function(done) {
+    it('TestComponent3/4 - should be present like child of TestComponent2', async function() {
         let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
         var node=document.createElement('div');
         node.innerHTML=`
@@ -61,49 +57,40 @@ describe('TestComponent3/4 added dinamically - add dinamically TestComponent3 li
         </div>`;
         testComponent2DomEl.appendChild(node.childNodes[1]);
         testComponent2.loadChildComponents();
-        setTimeout(()=>{
-            testComponent3=testComponent2.components["TestComponent3"];
-            testComponent4=testComponent2.components["TestComponent4"];
-            assert.equal(testComponent2.components["TestComponent3"].componentReferenceName, "TestComponent3");
-            assert.equal(testComponent2.components["TestComponent4"].componentReferenceName, "TestComponent4");
-            done();
-        },500);
-
+        await setTimeout(()=>{},500);
+        testComponent3=testComponent2.components["TestComponent3"];
+        testComponent4=testComponent2.components["TestComponent4"];
+        assert.equal(testComponent2.components["TestComponent3"].componentReferenceName, "TestComponent3");
+        assert.equal(testComponent2.components["TestComponent4"].componentReferenceName, "TestComponent4");
     });
 });
 
 
 describe('TestComponent3 component-click - click on TestComponent3 child on component-click attribute', function() {
-    it('TestComponent3 - clickEventsNumber must be increase of one',  function(done) {
+    it('TestComponent3 - clickEventsNumber must be increase of one', async function() {
         let clickEventsNumberBefore=TestManager.getClickEvents("TestComponent3");
-        document.querySelector(`[component-reference-name="TestComponent3"] [component-click]`).click();
-        setTimeout(()=>{
-            assert.equal(TestManager.getClickEvents("TestComponent3"), (clickEventsNumberBefore + 1));
-            done();
-        },500);
-
+        document.querySelector(`[component-reference-name="TestComponent3"] [component-click="clickHandler()"]`).click();
+        await setTimeout(()=>{},500);
+        assert.equal(TestManager.getClickEvents("TestComponent3"), (clickEventsNumberBefore + 1));
     });
 });
 
 describe('TestComponent5 instanced by javascript - instanced by javascript TestComponent5 under TestComponent2', function() {
-    it('TestComponent5 - should be present like child of TestComponent2', function(done) {
+    it('TestComponent5 - should be present like child of TestComponent2', async function() {
         let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
         var node=document.createElement('div');
         node.innerHTML=`<div></div>`;
         let nodeToAppend=node.childNodes[0];
         testComponent2DomEl.appendChild(nodeToAppend);
         testComponent5 = new TestComponent(nodeToAppend,testComponent2,{componentReferenceName:"TestComponent5"});
-        setTimeout(()=>{
-            assert.equal(testComponent2.components["TestComponent5"].componentReferenceName, "TestComponent5");
-            done();
-        },500);
-
+        await setTimeout(()=>{},500);
+        assert.equal(testComponent2.components["TestComponent5"].componentReferenceName, "TestComponent5");
     });
 });
 
 
 describe('TestComponent6 instanced by javascript - instanced by javascript TestComponent6 under TestComponent5', function() {
-    it('TestComponent6 - should be present like child of TestComponent5',  function(done) {
+    it('TestComponent6 - should be present like child of TestComponent5', async function() {
         let testComponent5DomEl= document.querySelector(`[component-reference-name="TestComponent5"]`);
         var node=document.createElement('div');
         node.innerHTML=`<div>
@@ -112,11 +99,8 @@ describe('TestComponent6 instanced by javascript - instanced by javascript TestC
         let nodeToAppend=node.childNodes[0];
         testComponent5DomEl.appendChild(nodeToAppend);
         testComponent6 = new TestComponent(nodeToAppend,testComponent5,{componentReferenceName:"TestComponent6"});
-        setTimeout(()=>{
-            assert.equal(testComponent5.components["TestComponent6"].componentReferenceName, "TestComponent6");
-            done();
-        },500);
-
+        await setTimeout(()=>{},500);
+        assert.equal(testComponent5.components["TestComponent6"].componentReferenceName, "TestComponent6");
     });
 });
 
@@ -144,7 +128,7 @@ describe('Detect conflict in component-reference-name - using two times TestComp
 
 
 describe('Handle event - stopping propagation across innested component-click function', function() {
-    it('Stop event propagation Only the first function component-click in the hierarchy is invoked',  function(done) {
+    it('Stop event propagation Only the first function component-click in the hierarchy is invoked', async function() {
 
         let clickEventsNumberBefore=TestManager.getClickEvents("StopClickPropagationComponent");
 
@@ -160,43 +144,37 @@ describe('Handle event - stopping propagation across innested component-click fu
         let loadedComponents = testComponent.loadChildComponents();
         stopClickPropagationComponent=loadedComponents[1];
         document.querySelector(`[component-reference-name="StopClickPropagationComponent"] button`).click();
-        setTimeout(()=>{
-            console.log(TestManager.getClickEvents("StopClickPropagationComponent"));
-            assert.equal(TestManager.getClickEvents("StopClickPropagationComponent"), (clickEventsNumberBefore+1));
-            done();
-        },1000);
-
+        await setTimeout(()=>{},1000);
+        console.log(TestManager.getClickEvents("StopClickPropagationComponent"));
+        assert.equal(TestManager.getClickEvents("StopClickPropagationComponent"), (clickEventsNumberBefore+1));
     })
 })
 
 describe('Remove TestComponent2 from dom - remove the dom element that contains the component', function() {
-    it('Component and theirs chilldren must be deallocated',  function(done) {
+    it('Component and theirs chilldren must be deallocated', async function() {
 
         let testComponent2DomEl= document.querySelector(`[component-reference-name="TestComponent2"]`);
+
         testComponent2DomEl.remove();
-        setTimeout(()=>{
-            let allComponentsRemoved= [testComponent2,testComponent3,testComponent4,testComponent5,testComponent6].reduce((accumulator,current)=>{
-                return accumulator &&  (Object.keys(current).length === 0  || !current);
-            },true);
-            assert.equal(allComponentsRemoved, true);
-            done();
-        },1000);
+        await setTimeout(()=>{},1000);
 
+        let allComponentsRemoved= [testComponent2,testComponent3,testComponent4,testComponent5,testComponent6].reduce((accumulator,current)=>{
+            return accumulator &&  (Object.keys(current).length === 0  || !current);
+        },true);
 
+        assert.equal(allComponentsRemoved, true);
     })
 })
 
 describe('Remove TestComponent programmatically - remove the dom element and theirs children', function() {
-    it('Component and theirs chilldren must be deallocated', function(done) {
+    it('Component and theirs chilldren must be deallocated', async function() {
         testComponent.smart_destroy();
-        setTimeout(()=>{
-            let allComponentsRemoved= [testComponent,stopClickPropagationComponent].reduce((accumulator,current)=>{
-                return accumulator &&  (Object.keys(current).length === 0  || !current);
-            },true);
-            assert.equal(allComponentsRemoved, true);
-            done();
-        },1000);
+        await setTimeout(()=>{},2000);
+        let allComponentsRemoved= [testComponent,stopClickPropagationComponent].reduce((accumulator,current)=>{
+            return accumulator &&  (Object.keys(current).length === 0  || !current);
+        },true);
 
+        assert.equal(allComponentsRemoved, true);
     })
 })
 
