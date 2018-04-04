@@ -821,16 +821,17 @@ var SmartComponent = function () {
         value: function _bindComponentClick(node) {
             var _this = this;
 
-            var isAlreadyBinded = this.bindedElements["click"].reduce(function (accumulator, currentNode) {
+            /*
+            let isAlreadyBinded=this.bindedElements["click"].reduce((accumulator,currentNode)=>{
                 return accumulator || currentNode.isEqualNode(node);
-            }, false);
-
-            if (!isAlreadyBinded) {
-                this.bindedElements["click"].push(node);
-                node.addEventListener('click', function (e) {
-                    _this.smart_clickHandler(e);
-                });
-            }
+            },false);
+            */
+            //if(!isAlreadyBinded){
+            this.bindedElements["click"].push(node);
+            node.addEventListener('click', function (e) {
+                _this.smart_clickHandler(e);
+            });
+            //}
         }
     }, {
         key: "checkComponentsHierarchyAndBindClick",
@@ -955,9 +956,6 @@ var SmartComponent = function () {
                     }
                 }
             }
-
-            var that = this;
-            that = null;
         }
     }]);
     return SmartComponent;
