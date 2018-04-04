@@ -127,16 +127,17 @@ class SmartComponent {
 
     _bindComponentClick(node) {
 
+        /*
         let isAlreadyBinded=this.bindedElements["click"].reduce((accumulator,currentNode)=>{
             return accumulator || currentNode.isEqualNode(node);
         },false);
-
-        if(!isAlreadyBinded){
+        */
+        //if(!isAlreadyBinded){
             this.bindedElements["click"].push(node);
             node.addEventListener('click', (e)=> {
                 this.smart_clickHandler(e)
             });
-        }
+        //}
     }
 
     checkComponentsHierarchyAndBindClick(node){
