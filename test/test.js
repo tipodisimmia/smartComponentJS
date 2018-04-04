@@ -14,6 +14,7 @@ let testComponent5=null;
 let testComponent6=null;
 let stopClickPropagationComponent=null;
 
+
 describe('TestComponent1 - Instance by name', function() {
     testComponent = SmartComponentManager.initComponentByName(document.querySelector(`[component-reference-name="TestComponent1"]`),"TestComponent");
     it('TestComponent1 - should be instanced', function() {
@@ -28,6 +29,24 @@ describe('TestComponent1 - load child components passing like parent TestCompone
             return component.componentReferenceName=="TestComponent2";
         })[0];
         assert.equal(testComponent2.parentComponent.componentReferenceName, "TestComponent1");
+    });
+});
+
+describe('TestComponent1 - click on button inserted runtime with component-click attribute', function() {
+    it('TestComponent1 - click events must incremented', function(done) {
+        let clickEventsNumberBefore=TestManager.getClickEvents("TestComponent1");
+        var node=document.createElement('div');
+        node.innerHTML=`<button component-click="clickHandler()" id="TestComponent1Click">TestComponent1 </button>`;
+        let nodeToAppend=node.childNodes[0];
+        testComponent.element.appendChild(nodeToAppend);
+
+        setTimeout(()=>{
+            document.getElementById("TestComponent1Click").click();
+            setTimeout(()=>{
+                assert.equal(clickEventsNumberBefore+1, TestManager.getClickEvents("TestComponent1"));
+                done();
+            },800);
+        },500);
     });
 });
 
@@ -203,7 +222,6 @@ describe('Remove TestComponent programmatically - remove the dom element and the
 
     })
 })
-
 
 
 //replace eval method in order to retrieve function parameters
