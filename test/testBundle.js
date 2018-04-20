@@ -821,17 +821,18 @@ var SmartComponent = function () {
         value: function _bindComponentClick(node) {
             var _this = this;
 
-            /*
-            let isAlreadyBinded=this.bindedElements["click"].reduce((accumulator,currentNode)=>{
-                return accumulator || currentNode.isEqualNode(node);
-            },false);
-            */
-            //if(!isAlreadyBinded){
-            this.bindedElements["click"].push(node);
-            node.addEventListener('click', function (e) {
-                _this.smart_clickHandler(e);
-            });
-            //}
+            var isAlreadyBinded = node.smartComponentEvents && node.smartComponentEvents["click"];
+
+            if (!isAlreadyBinded) {
+                node.smartComponentEvents = {};
+                node.smartComponentEvents["click"] = true;
+                this.bindedElements["click"].push(node);
+                node.addEventListener('click', function (e) {
+                    _this.smart_clickHandler(e);
+                });
+            } else {
+                console.log(isAlreadyBinded);
+            }
         }
     }, {
         key: "checkComponentsHierarchyAndBindClick",
@@ -1113,6 +1114,21 @@ describe('TestComponent3 component-click - click on TestComponent3 child on comp
         }, 500);
     });
 });
+
+
+describe('TestComponent3 component-click on element removed a reinserted - click on TestComponent3 child on component-click attribute must', function () {
+    it('TestComponent3 - clickEventsNumber must be increase of one', function (done) {
+        var clickEventsNumberBefore = TestManager$1.getClickEvents("TestComponent3");
+        var domClickElement=document.querySelector("[component-reference-name=\"TestComponent3\"] [component-click]");
+        domClickElement
+        domClickElement.click();
+        setTimeout(function () {
+            assert.equal(TestManager$1.getClickEvents("TestComponent3"), clickEventsNumberBefore + 1);
+            done();
+        }, 500);
+    });
+});
+
 
 describe('TestComponent5 instanced by javascript - instanced by javascript TestComponent5 under TestComponent2', function () {
     it('TestComponent5 - should be present like child of TestComponent2', function (done) {
