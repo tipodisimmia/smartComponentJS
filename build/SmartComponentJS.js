@@ -821,17 +821,18 @@ var SmartComponent = function () {
         value: function _bindComponentClick(node) {
             var _this = this;
 
-            /*
-            let isAlreadyBinded=this.bindedElements["click"].reduce((accumulator,currentNode)=>{
-                return accumulator || currentNode.isEqualNode(node);
-            },false);
-            */
-            //if(!isAlreadyBinded){
-            this.bindedElements["click"].push(node);
-            node.addEventListener('click', function (e) {
-                _this.smart_clickHandler(e);
-            });
-            //}
+            var isAlreadyBinded = node.smartComponentEvents && node.smartComponentEvents["click"];
+
+            if (!isAlreadyBinded) {
+                if (!node.smartComponentEvents) {
+                    node.smartComponentEvents = {};
+                }
+                node.smartComponentEvents["click"] = true;
+                this.bindedElements["click"].push(node);
+                node.addEventListener('click', function (e) {
+                    _this.smart_clickHandler(e);
+                });
+            }
         }
     }, {
         key: "checkComponentsHierarchyAndBindClick",
