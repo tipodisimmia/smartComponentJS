@@ -80,6 +80,10 @@ class SmartComponentManager {
     }
 
     removeComponentInstance(id) {
+        var instance=this.getComponentInstanceById(id);
+        if(!!instance.parentComponent && !!instance.parentComponent.components){
+            delete instance.parentComponent.components[instance.componentReferenceName];
+        }
         delete this.componentsInstance[id];
     }
 

@@ -654,6 +654,10 @@ var SmartComponentManager = function () {
     }, {
         key: "removeComponentInstance",
         value: function removeComponentInstance(id) {
+            var instance = this.componentsInstance[id];
+            if (!!instance.parentComponent && !!instance.parentComponent.components) {
+                delete instance.parentComponent.components[instance.componentReferenceName];
+            }
             delete this.componentsInstance[id];
         }
     }, {
