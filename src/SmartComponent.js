@@ -35,12 +35,19 @@ class SmartComponent {
         this.element.setAttribute("component-id",this._componentId);
 
         if(!this.element.getAttribute("component")){
+
+            /*
             let componentName=this.constructor.name;
             //ie11 doesn't support function name
             if(!componentName){
                 componentName = this.constructor.toString().match(/^function\s*([^\s(]+)/)[1];
+            }*/
+            if(params.className){
+                this.element.setAttribute("component",params.className);
+            }else{
+                throw "param className is mandatory if attribute component is not specified in html element";
+                return false;
             }
-            this.element.setAttribute("component",componentName);
         }
 
 
