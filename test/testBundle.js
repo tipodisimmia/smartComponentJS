@@ -654,7 +654,7 @@ var SmartComponentManager = function () {
     }, {
         key: "removeComponentInstance",
         value: function removeComponentInstance(id) {
-            var instance = this.componentsInstance[id];
+            var instance = this.getComponentInstanceById(id);
             if (!!instance.parentComponent && !!instance.parentComponent.components) {
                 delete instance.parentComponent.components[instance.componentReferenceName];
             }
@@ -729,12 +729,19 @@ var SmartComponent = function () {
             this.element.setAttribute("component-id", this._componentId);
 
             if (!this.element.getAttribute("component")) {
-                var componentName = this.constructor.name;
+
+                /*
+                let componentName=this.constructor.name;
                 //ie11 doesn't support function name
-                if (!componentName) {
+                if(!componentName){
                     componentName = this.constructor.toString().match(/^function\s*([^\s(]+)/)[1];
+                }*/
+                if (this.params.className) {
+                    this.element.setAttribute("component", this.params.className);
+                } else {
+                    throw "param className is mandatory if attribute component is not specified in html element";
+                    return false;
                 }
-                this.element.setAttribute("component", componentName);
             }
 
             if (this.parentComponent && !this.parentComponent.components) {
@@ -773,7 +780,7 @@ var SmartComponent = function () {
     }, {
         key: "_generateUid",
         value: function _generateUid() {
-            return this.constructor.name + "_" + 'xxxxxxxx'.replace(/[xy]/g, function (c) {
+            return this.params.classname || this.constructor.name + "_" + 'xxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0,
                     v = c == 'x' ? r : r & 0x3 | 0x8;
                 return v.toString(16);

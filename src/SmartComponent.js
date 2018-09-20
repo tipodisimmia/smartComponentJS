@@ -42,8 +42,8 @@ class SmartComponent {
             if(!componentName){
                 componentName = this.constructor.toString().match(/^function\s*([^\s(]+)/)[1];
             }*/
-            if(params.className){
-                this.element.setAttribute("component",params.className);
+            if(this.params.className){
+                this.element.setAttribute("component",this.params.className);
             }else{
                 throw "param className is mandatory if attribute component is not specified in html element";
                 return false;
@@ -89,7 +89,7 @@ class SmartComponent {
     }
 
     _generateUid() {
-        return  this.constructor.name+"_"+'xxxxxxxx'.replace(/[xy]/g, function (c) {
+        return  this.params.classname || this.constructor.name+"_"+'xxxxxxxx'.replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0,
                 v = c == 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
