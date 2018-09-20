@@ -705,10 +705,10 @@ var SmartComponent = function () {
         value: function smart_init(element, parentComponent, params) {
             this.element = element;
             this.bindedElements = { "click": [] };
-            this._componentId = this._generateUid();
+            this.params = params || {};
             this.parentComponent = parentComponent;
             this.componentReferenceName = null;
-            this.params = params || {};
+            this._componentId = this._generateUid();
 
             //Serve per recuperare il componente  tramite un nome di fantasia contenuto nell'attributo component-reference-name
             var componentReferenceName = this.params.componentReferenceName ? this.params.componentReferenceName : this.element.getAttribute("component-reference-name");
@@ -780,7 +780,7 @@ var SmartComponent = function () {
     }, {
         key: "_generateUid",
         value: function _generateUid() {
-            return this.params.classname || this.constructor.name + "_" + 'xxxxxxxx'.replace(/[xy]/g, function (c) {
+            return this.params.className || this.constructor.name + "_" + 'xxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0,
                     v = c == 'x' ? r : r & 0x3 | 0x8;
                 return v.toString(16);
@@ -1008,6 +1008,9 @@ var TestComponent = function (_SmartComponent) {
 
     function TestComponent(element, parentComponent, params) {
         classCallCheck(this, TestComponent);
+
+        params = params || {};
+        params.className = 'TestComponent';
         return possibleConstructorReturn(this, (TestComponent.__proto__ || Object.getPrototypeOf(TestComponent)).call(this, element, parentComponent, params));
     }
 
@@ -1026,6 +1029,9 @@ var StopClickPropagationComponent = function (_SmartComponent) {
 
     function StopClickPropagationComponent(element, parentComponent, params) {
         classCallCheck(this, StopClickPropagationComponent);
+
+        params = params || {};
+        params.className = 'StopClickPropagationComponent';
         return possibleConstructorReturn(this, (StopClickPropagationComponent.__proto__ || Object.getPrototypeOf(StopClickPropagationComponent)).call(this, element, parentComponent, params));
     }
 

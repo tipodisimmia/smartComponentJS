@@ -4,6 +4,8 @@ import TestManager from "../TestManager";
 class TestComponent extends SmartComponent{
 
     constructor(element,parentComponent,params) {
+        params=params || {};
+        params.className='TestComponent';
         super(element,parentComponent,params);
     }
 

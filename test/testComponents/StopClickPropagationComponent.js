@@ -4,6 +4,8 @@ import TestManager from "../TestManager";
 class StopClickPropagationComponent extends SmartComponent{
 
     constructor(element,parentComponent,params) {
+        params=params || {};
+        params.className='StopClickPropagationComponent';
         super(element,parentComponent,params);
     }
 
